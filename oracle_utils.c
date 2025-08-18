@@ -2316,10 +2316,9 @@ oracleExecuteCall(oracleSession *session, char * const stmt)
 /*
  * oracleGetLob
  * 		Get the LOB contents and store them in *value and *value_len.
- * 		If "trunc" is nonzero, it contains the number of bytes or characters to get.
  */
 void
-oracleGetLob(oracleSession *session, void *locptr, oraType type, char **value, long *value_len, unsigned long trunc)
+oracleGetLob(oracleSession *session, void *locptr, oraType type, char **value, long *value_len)
 {
 	OCILobLocator *locp = *(OCILobLocator **)locptr;
 	oraub8 amount_byte, amount_char, lobsize;
@@ -2350,10 +2349,6 @@ oracleGetLob(oracleSession *session, void *locptr, oraType type, char **value, l
 			"error fetching result: OCILobGetLength2 failed get the LOB size",
 			oraMessage);
 	}
-
-	/* don't fetch more that "trunc" if it is non-zero */
-	if (trunc != 0 && trunc < lobsize)
-		lobsize = (oraub8)trunc;
 
 	/*
 	 * Read the LOB in chunks.
